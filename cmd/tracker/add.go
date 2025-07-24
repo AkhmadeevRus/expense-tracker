@@ -10,6 +10,7 @@ import (
 var (
 	addDescription string
 	addAmount      float64
+	addCategory    string
 )
 
 func NewAddCmd() *cobra.Command {
@@ -25,6 +26,7 @@ func NewAddCmd() *cobra.Command {
 	addCmd.MarkFlagRequired("description")
 	addCmd.Flags().Float64VarP(&addAmount, "amount", "a", 0, "amount of the expense(required)")
 	addCmd.MarkFlagRequired("amount")
+	addCmd.Flags().StringVarP(&addCategory, "category", "c", "general", "category of the expense")
 	return addCmd
 }
 
@@ -32,5 +34,5 @@ func RunAddExpenseCmd(args []string) error {
 	if addAmount < 0 {
 		return fmt.Errorf("amount can't be negative")
 	}
-	return internal.AddExpense(addAmount, addDescription)
+	return internal.AddExpense(addAmount, addDescription, addCategory)
 }

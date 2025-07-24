@@ -9,6 +9,7 @@ var (
 	updateExpenseId   int64
 	updateDescription string
 	updateAmount      float64
+	updateCategory    string
 )
 
 func NewUpdateCmd() *cobra.Command {
@@ -23,9 +24,10 @@ func NewUpdateCmd() *cobra.Command {
 	updateCmd.MarkFlagRequired("id")
 	updateCmd.Flags().StringVarP(&updateDescription, "description", "d", "", "description for update")
 	updateCmd.Flags().Float64VarP(&updateAmount, "amount", "a", 0., "amount for update")
+	updateCmd.Flags().StringVarP(&updateCategory, "category", "c", "general", "amount for update")
 	return &updateCmd
 }
 
 func RunUpdateExpenseCmd(args []string) error {
-	return internal.UpdateExpense(updateExpenseId, updateDescription, updateAmount)
+	return internal.UpdateExpense(updateExpenseId, updateDescription, updateAmount, updateCategory)
 }

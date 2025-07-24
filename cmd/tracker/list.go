@@ -5,6 +5,8 @@ import (
 	"github.com/spf13/cobra"
 )
 
+var listCategory string
+
 func NewListCmd() *cobra.Command {
 	listCmd := &cobra.Command{
 		Use:   "list",
@@ -13,9 +15,10 @@ func NewListCmd() *cobra.Command {
 			return RunListExpensesCmd(args)
 		},
 	}
+	listCmd.Flags().StringVarP(&listCategory, "category", "c", "", "list by category")
 	return listCmd
 }
 
 func RunListExpensesCmd(args []string) error {
-	return internal.ListExpenses()
+	return internal.ListExpenses(listCategory)
 }
