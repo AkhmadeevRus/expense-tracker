@@ -12,7 +12,6 @@ func NewRootCmd() *cobra.Command {
 	cmd.AddCommand(NewUpdateCmd())
 	cmd.AddCommand(NewListCmd())
 	cmd.AddCommand(NewSummaryCmd())
-	cmd.AddCommand(NewSummaryByMonthCmd())
 
 	return cmd
 }
