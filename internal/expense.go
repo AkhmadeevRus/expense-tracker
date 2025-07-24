@@ -105,3 +105,45 @@ func UpdateExpense(id int64, description string, amount float64) error {
 
 	return WriteExpenseToFile(updateExpenses)
 }
+
+func SummaryExpenses() error {
+	expenses, err := ReadExpenseFromFile()
+	if err != nil {
+		return err
+	}
+
+	if len(expenses) == 0 {
+		fmt.Println("expenses not found")
+		return nil
+	}
+
+	var sumAmount float64
+
+	for _, expense := range expenses {
+		sumAmount += expense.Amount
+	}
+	fmt.Printf("\nThe total amount of costs: %.f$\n\n", sumAmount)
+	return nil
+}
+
+func SummaryExpensesByMonth(month int) error {
+	expenses, err := ReadExpenseFromFile()
+	if err != nil {
+		return err
+	}
+
+	if len(expenses) == 0 {
+		fmt.Println("expenses not found")
+		return nil
+	}
+
+	var sumAmountByMonth float64
+
+	for _, expense := range expenses {
+		if month == int(expense.CreatedAt.Month()) {
+			sumAmountByMonth += expense.Amount
+		}
+	}
+	fmt.Printf("\ntotal expenses for the %dth month: %.f$\n\n", month, sumAmountByMonth)
+	return nil
+}
