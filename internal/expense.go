@@ -41,6 +41,9 @@ func AddExpense(amount float64, description string, category string) error {
 
 	newExpense := NewExpense(newExpenseId, description, amount, category)
 	expenses = append(expenses, *newExpense)
+
+	checkBudget(time.Now(), expenses)
+
 	return WriteExpenseToFile(expenses)
 }
 
@@ -95,6 +98,7 @@ func UpdateExpense(id int64, description string, amount float64, category string
 		return err
 	}
 
+	var createTime time.Time
 	var found bool
 	var updateExpenses []Expense
 	for _, expense := range expenses {
@@ -104,16 +108,38 @@ func UpdateExpense(id int64, description string, amount float64, category string
 			expense.Amount = amount
 			expense.Category = category
 			expense.UpdateAt = time.Now()
+			createTime = expense.CreatedAt
 		}
 		updateExpenses = append(updateExpenses, expense)
 	}
 
 	if !found {
+		checkBudget(createTime, expenses)
+	} else {
 		fmt.Printf("\nexpense by id:%d not found\n\n", id)
 		return nil
 	}
 
 	return WriteExpenseToFile(updateExpenses)
+}
+
+func checkBudget(createAt time.Time, expenses []Expense) error {
+	thisMonthBudget, err := GetMonthlyBudget(int64(createAt.Month()))
+	if err != nil {
+		return err
+	}
+
+	var thisMonthExpenses float64
+	for _, expense := range expenses {
+		if expense.CreatedAt.Month() == createAt.Month() {
+			thisMonthExpenses += expense.Amount
+		}
+	}
+
+	if thisMonthBudget != 0 && thisMonthBudget < thisMonthExpenses {
+		fmt.Printf("\nwarning! You have exceeded your budget for this month\nBudget:%.f\n\nExpenses:%.f\n", thisMonthBudget, thisMonthExpenses)
+	}
+	return nil
 }
 
 func SummaryExpensesByMonth(month int) error {
